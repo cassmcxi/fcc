@@ -1,4 +1,3 @@
-# --- Secrets / environment ---
 .env
 .env.*
 *.pem
@@ -6,13 +5,11 @@
 secrets.json
 credentials.json
 
-# --- Python virtual environments ---
 .venv/
 venv/
 myenv/
 env/
 
-# --- Python caches / build artifacts ---
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -20,7 +17,6 @@ __pycache__/
 .mypy_cache/
 .ipynb_checkpoints/
 
-# --- OS / editor junk ---
 .DS_Store
 Thumbs.db
 *.swp
