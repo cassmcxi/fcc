@@ -1,25 +1,28 @@
+
+
+
+
+
 import requests
+from bs4 import BeautifulSoup
+
 
 def decode_secret_message(url):
     response = requests.get(url)
     if response.status_code != 200:
-        print("Failed to fetch document.")
+        print('Failed to fetch document.')
         return
 
-    lines = response.text.strip().splitlines()
+    soup = BeautifulSoup(response.text, 'html.parser')
+    lines = soup.find_all('td')
 
-    print("RAW LINES FROM DOCUMENT:")
-    print(lines[:30])  # Show first 30 lines of content for debugging
-
-    # Clean lines: remove blank lines and header labels
     clean_lines = []
     for line in lines:
-        line = line.strip()
+        line = line.get_text(strip=True)
         if line.lower() in ['x-coordinate', 'y-coordinate', 'character', '']:
             continue
         clean_lines.append(line)
 
-    # Now parse every 3 lines as: x, char, y
     positions = []
     i = 0
     while i + 2 < len(clean_lines):
@@ -30,7 +33,7 @@ def decode_secret_message(url):
             positions.append((char, x, y))
             i += 3
         except (ValueError, IndexError):
-            i += 1  # Skip bad chunks
+            i += 1
 
     if not positions:
         print("No valid data found.")
@@ -41,11 +44,12 @@ def decode_secret_message(url):
 
     grid = [[' ' for _ in range(max_x + 1)] for _ in range(max_y + 1)]
     for char, x, y in positions:
-        grid[y][x] = char
+        grid[max_y - y][x] = char
 
     for row in grid:
         print("".join(row))
 
+
 code_url = 'https://docs.google.com/document/d/e/2PACX-1vSvM5gDlNvt7npYHhp_XfsJvuntUhq184By5xO_pA4b_gCWeXb6dM6ZxwN8rE6S4ghUsCj2VKR21oEP/pub'
 
-print(decode_secret_message(code_url))
+decode_secret_message(code_url)
